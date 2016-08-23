@@ -21,7 +21,8 @@ require(['jquery','window'],function($,w){
             },
             title:'提示',
             hasCloseBtn:true,
-            skinClassName:'window_skin_a'
+            skinClassName:'window_skin_a',
+            text4AlertBtn:'OK'
         });
     });
 });
