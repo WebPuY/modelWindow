@@ -1,7 +1,7 @@
 require.config({
     // 配置jquery路径和版本
     paths:{
-        jquery:'../../jquery-1.11.1.min'
+        jquery:'../../../jquery-1.11.1.min'
     }
 });
 
@@ -13,9 +13,15 @@ require(['jquery','window'],function($,w){
             height:150,
             y:50,
             content:'welcome!!!',
-            handler:function(){
-                alert('you click the button second');
-            }
+            handler4CloseBtn:function(){
+                alert('you click the close button');
+            },
+            handler4AlertBtn:function(){
+                alert('you click the alert button');
+            },
+            title:'提示',
+            hasCloseBtn:true,
+            skinClassName:'window_skin_a'
         });
     });
 });

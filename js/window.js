@@ -5,7 +5,11 @@ define(['jquery'],function($){
             width:500,
             height:300,
             content:'',
-            handler:null
+            title:'系统消息',
+            hasCloseBtn:false,
+            handler4AlertBtn:null,
+            handler4CloseBtn:null,
+            skinClassName:null
         }
     }
 
@@ -16,17 +20,20 @@ define(['jquery'],function($){
             var CFG = $.extend(this.cfg,cfg);
 
             // 动态创建弹出层
-            var boundingBox = $('<div class="window_boundingBox"></div>');
-            boundingBox.appendTo('body');
-            boundingBox.html(CFG.content);
+            var boundingBox = $(
+                '<div class="window_boundingBox">'+
+                    '<div class="window_header">'+ CFG.title+'</div>'+
+                    '<div class="window_body">'+CFG.content+'</div>'+
+                    '<div class="window_footer"><input type="button" value="确定" class="window_alertBtn"/></div>'
+                +'</div>'),
+                btn = boundingBox.find('.window_alertBtn');
 
-            // 给弹出层动态添加关闭按钮
-            var btn = $('<input type="button" value="确定" />');
-            btn.appendTo(boundingBox);
+            boundingBox.appendTo('body');
+
             btn.click(function(){
 
-                //handler是回调函数
-                CFG.handler && CFG.handler();
+                //handler4AlertBtn
+                CFG.handler4AlertBtn && CFG.handler4AlertBtn();
                 boundingBox.remove();
             });
 
@@ -37,6 +44,18 @@ define(['jquery'],function($){
                 left:(this.cfg.x || (window.innerWidth - this.cfg.width) / 2) + 'px',
                 top:(this.cfg.y || (window.innerWidth - this.cfg.height) / 2) + 'px'
             });
+
+            if(CFG.hasCloseBtn){
+                var closeBtn = $('<span class="window_close">X</span>');
+                closeBtn.appendTo(boundingBox);
+                closeBtn.click(function(){
+                     CFG.handler4CloseBtn && CFG.handler4CloseBtn();
+                    boundingBox.remove();
+                });
+            }
+            if(CFG.skinClassName){
+                boundingBox.addClass(CFG.skinClassName);
+            }
         },
         confirm:function(){},
         prompt:function(){}

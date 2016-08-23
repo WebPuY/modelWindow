@@ -12,3 +12,43 @@
     left:50%;
     margin-left: -50px;
 }
+.window_header{
+    background: #333;
+    color:#fff;
+    text-align: center;
+    padding:5px;
+    font-size: 20px;
+}
+.window_body{
+    padding:10px;
+}
+.window_close{
+    position: absolute;
+    right: 0;
+    top:0;
+    padding:5px 10px;
+    font-size:20px;
+    background-color: blue;
+    color:#fff;
+    cursor:pointer;
+}
+.window_alertBtn{
+    width:100px;
+    position: absolute;
+    bottom:10px;
+    left: 50%;
+    margin-left:-50px;
+}
+
+.window_skin_a .window_boundingBox{}
+.window_skin_a .window_header{background-color: #ddd;color:#333;}
+.window_skin_a .window_close{background-color: #e90;color:#333;}
+.window_skin_a .window_alertBtn{}
+
+
+
+
+
+
+
+
