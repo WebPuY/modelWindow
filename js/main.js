@@ -12,9 +12,10 @@ require(['jquery','window'],function($,w){
         var win = new w.Win();
 
         win.alert({
+            y:50,
             width:300,
             height:150,
-            y:50,
+            title:'提示',
             content:'welcome!!!',
             // handler4CloseBtn:function(){
             //     alert('you click the close button');
@@ -22,7 +23,6 @@ require(['jquery','window'],function($,w){
             // handler4AlertBtn:function(){
             //     alert('you click the alert button');
             // },
-            title:'提示',
             hasCloseBtn:true,
             skinClassName:'window_skin_a',
             text4AlertBtn:'OK',
@@ -34,5 +34,54 @@ require(['jquery','window'],function($,w){
         win.on('alert',function(){ alert('the third alert handler');});
         win.on('close',function(){ alert('the first close handler');});
         win.on('close',function(){ alert('the second close handler');});
+    });
+
+    $('#b').click(function(){
+        new w.Win().confirm({
+            y:50,
+            width:300,
+            height:150,
+            title:'系统消息',
+            hasCloseBtn:true,
+            text4CancelBtn : '否',
+            text4ConfirmBtn : '是',
+            content:'confirm content',
+            dragHandle:'.window_header'
+        }).on('confirm',function(){
+            alert('sure');
+        }).on('cancel',function(){
+            alert('no');
+        });
+    });
+
+    $('#c').click(function(){
+        new w.Win().prompt({
+            y:50,
+            width:300,
+            height:150,
+            hasCloseBtn:true,
+            title:'请输入您的姓名',
+            text4PromptBtn : '输入',
+            text4CancelBtn : '取消',
+            content:'我们将保存您的信息',
+            dragHandle:'.window_header',
+            defaultValue4PromptInput:'张三',
+            handler4PromptBtn:function(inputValue){
+                alert('您输入的内容是 ' + inputValue);
+            }
+        }).on('cancel',function(){
+            alert('取消');
+        });
+    });
+
+    $('#d').click(function(){
+        new w.Win().common({
+            y:50,
+            width:300,
+            height:150,
+            hasCloseBtn:true,
+            content:'我是一个通用弹窗',
+            dragHandle:'.window_header'
+        });
     });
 });

@@ -7,13 +7,22 @@ define(['widget','jquery','jqueryUI'],function(widget,$,$UI){
             content:'',
             title:'系统消息',
             hasCloseBtn:false,
-            handler4AlertBtn:null,
-            handler4CloseBtn:null,
             skinClassName:null,
-            text4AlertBtn:'确定',
             hasMask:true,
             isDraggable:true,
-            dragHandle:null
+            dragHandle:null,
+            text4AlertBtn:'OK',     //alert弹窗确定按钮
+            text4ConfirmBtn:'确定',   //confirm弹窗的确定按钮
+            text4CancelBtn:'取消',    //confirm弹窗的取消按钮
+            handler4AlertBtn:null,   //点击alert弹窗确定按钮后的回调函数
+            handler4CloseBtn:null,
+            handler4ConfirmBtn:null,    //点击confirm弹窗确定按钮后的回调函数
+            handler4CancelBtn:null,      //点击confirm弹窗取消按钮后的回调函数
+            text4PromptBtn:'确定',
+            handler4PromptBtn:null,
+            maxlength4PromptInput:10,
+            isPromptInputPassword:false,
+            defaultValue4PromptInput:''
         };
 
         this.handlers = {};
@@ -22,12 +31,29 @@ define(['widget','jquery','jqueryUI'],function(widget,$,$UI){
     Win.prototype = $.extend({},new widget.Widget(),{
 
         renderUI:function(){
+            var footerContent = '';
+            switch(this.cfg.winType){
+                case 'alert':
+                    footerContent = '<input type="button" value="'+ this.cfg.text4AlertBtn +'" class="window_alertBtn" />';
+                    break;
+                case 'confirm':
+                    footerContent = '<input type="button" value="'+ this.cfg.text4ConfirmBtn +'" class="window_confirmBtn" /><input type="button" value="'+ this.cfg.text4CancelBtn +'" class="window_cancelBtn" />';
+                    break;
+                case 'prompt':
+                    this.cfg.content += '<p class="window_promptInputWrapper"><input type="'+(this.cfg.isPromptInputPassword ? "password" : "text")+'" value="'+ this.cfg.defaultValue4PromptInput+'" maxlength="'+this.cfg.maxlength4PromptInput+'" class="window_promptInput" /></p>';
+                    footerContent = '<input type="button" value="'+ this.cfg.text4PromptBtn +'" class="window_promptBtn" /><input type="button" value="'+ this.cfg.text4CancelBtn +'" class="window_cancelBtn" />';
+                    break;
+            }
+
             this.boundingBox = $(
                 '<div class="window_boundingBox">'+
-                    '<div class="window_header">'+ this.cfg.title+'</div>'+
-                    '<div class="window_body">'+this.cfg.content+'</div>'+
-                    '<div class="window_footer"><input type="button" value="'+this.cfg.text4AlertBtn+'" class="window_alertBtn"/></div>'
+                    '<div class="window_body">'+this.cfg.content+'</div>'
                 +'</div>');
+
+            if(this.cfg.winType != 'common'){
+                this.boundingBox.prepend('<div class="window_header">'+ this.cfg.title+'</div>');
+                this.boundingBox.append('<div class="window_footer">'+footerContent+'</div>');
+            }
 
             if(this.cfg.hasMask){
                 this._mask = $('<div class="window_mask"></div>');
@@ -38,6 +64,8 @@ define(['widget','jquery','jqueryUI'],function(widget,$,$UI){
                 this.boundingBox.append('<span class="window_close">X</span>');
             }
             this.boundingBox.appendTo(document.body);
+
+            this._promptInput = this.boundingBox.find('.window_promptInput');
         },
 
         bindUI:function(){
@@ -47,6 +75,15 @@ define(['widget','jquery','jqueryUI'],function(widget,$,$UI){
                 that.destory();
             }).delegate('.window_close','click',function(){
                 that.fire('close');
+                that.destory();
+            }).delegate('.window_confirmBtn','click',function(){
+                that.fire('confirm');
+                that.destory();
+            }).delegate('.window_cancelBtn','click',function(){
+                that.fire('cancel');
+                that.destory();
+            }).delegate('.window_promptBtn','click',function(){
+                that.fire('prompt', that._promptInput.val());
                 that.destory();
             });
 
@@ -58,6 +95,12 @@ define(['widget','jquery','jqueryUI'],function(widget,$,$UI){
             //     this.on('close',this.cfg.handler4CloseBtn);
             // }
             this.cfg.handler4CloseBtn && this.on('close',this.cfg.handler4CloseBtn);
+
+            this.cfg.handler4ConfirmBtn && this.on('confirm',this.cfg.handler4ConfirmBtn);
+
+            this.cfg.handler4CancelBtn && this.on('confirm',this.cfg.handler4CancelBtn);
+
+            this.cfg.handler4PromptBtn && this.on('prompt',this.cfg.handler4PromptBtn);
         },
 
         syncUI:function(){
@@ -80,21 +123,33 @@ define(['widget','jquery','jqueryUI'],function(widget,$,$UI){
                 }
             }
         },
+        destructor:function(){
+            this._mask && this._mask.remove();
+        },
         alert:function(cfg){
 
             //合并Win函数里面的cfg属性和cfg参数
-            $.extend(this.cfg,cfg);
+            $.extend(this.cfg,cfg,{winType:'alert'});
             this.render();
             return this;
 
         },
-
-        destructor:function(){
-            this._mask && this._mask.remove();
+        confirm:function(cfg){
+            $.extend(this.cfg,cfg,{winType:'confirm'});
+            this.render();
+            return this;
         },
-        
-        confirm:function(){},
-        prompt:function(){}
+        prompt:function(cfg){
+            $.extend(this.cfg,cfg,{winType:'prompt'});
+            this.render();
+            this._promptInput.focus();
+            return this;
+        },
+        common:function(cfg){
+            $.extend(this.cfg,cfg,{winType:'common'});
+            this.render();
+            return this;
+        }
     });
 
     return {
